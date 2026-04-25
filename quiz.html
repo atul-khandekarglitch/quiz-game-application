@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India General Knowledge Quiz</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { color: #2c3e50; text-align: center; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { background-color: #2980b9; }
+        .question { margin-bottom: 20px; display: none; }
+        .options-list { list-style: none; padding: 0; }
+        .options-list li { margin: 8px 0; }
+        #result-area { text-align: center; display: none; }
+        .grade-a { color: green; font-weight: bold; }
+        .grade-b { color: blue; }
+        .fail { color: red; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="login-section">
+        <h2>Student Login</h2>
+        <div class="input-group">
+            <label>Name:</label>
+            <input type="text" id="name" placeholder="Enter name">
+        </div>
+        <div class="input-group">
+            <label>Division:</label>
+            <input type="text" id="division" placeholder="Enter division">
+        </div>
+        <div class="input-group">
+            <label>Roll No (Hint: 2580):</label>
+            <input type="number" id="rollno" placeholder="Enter roll number">
+        </div>
+        <button onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="quiz-section" style="display:none;">
+        <h2 id="q-title">Question</h2>
+        <div id="options-container"></div>
+        <button onclick="submitAnswer()">Next Question</button>
+    </div>
+
+    <div id="result-area">
+        <h2>*** Result ***</h2>
+        <p id="final-score"></p>
+        <p id="grade-msg"></p>
+        <button onclick="location.reload()">Restart</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Who is first prime minister of India?", o: ["M. Gandhi", "J. Neharu", "Indira Gandhi", "None"], a: 1 },
+        { q: "What is capital of India?", o: ["Mumbai", "Pune", "Delhi", "U.P"], a: 2 },
+        { q: "Which is national animal of India?", o: ["Lion", "Tiger", "Fox", "None"], a: 1 },
+        { q: "Which is national bird of India?", o: ["Peacock", "Cock", "Parrot", "Crow"], a: 0 },
+        { q: "Which is the national flower of India?", o: ["Rose", "Sunflower", "Lili", "Lotus"], a: 3 },
+        { q: "What is financial capital of India?", o: ["Mumbai", "Pune", "Delhi", "Aasam"], a: 0 },
+        { q: "Who is the father of nation?", o: ["M. Gandhi", "J. Neharu", "Indira Gandhi", "None"], a: 0 },
+        { q: "What is the currency of India?", o: ["Dollar", "Euro", "Dinar", "Rupees"], a: 3 },
+        { q: "Which is largest state of India?", o: ["U.P", "Maharastra", "Aasam", "Goa"], a: 0 },
+        { q: "What is date of independence of India?", o: ["26", "1", "15", "14"], a: 2 }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+
+    function startQuiz() {
+        const roll = document.getElementById('rollno').value;
+        if(roll == "2580") {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('quiz-section').style.display = 'block';
+            loadQuestion();
+        } else {
+            alert("Entered roll no is incorrect!");
+        }
+    }
+
+    function loadQuestion() {
+        const qData = questions[currentQ];
+        document.getElementById('q-title').innerText = qData.q;
+        let html = "";
+        qData.o.forEach((opt, index) => {
+            html += `<label><input type="radio" name="quizOpt" value="${index}"> ${opt}</label><br>`;
+        });
+        document.getElementById('options-container').innerHTML = html;
+    }
+
+    function submitAnswer() {
+        const selected = document.querySelector('input[name="quizOpt"]:checked');
+        if(!selected) { alert("Please select an answer!"); return; }
+
+        if(parseInt(selected.value) === questions[currentQ].a) {
+            score++;
+        }
+
+        currentQ++;
+        if(currentQ < questions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        document.getElementById('final-score').innerText = `Total score of student: ${score}`;
+        
+        let msg = "";
+        let className = "";
+        if(score > 8) { msg = "PASSED WITH EXCELLENT GRADE = A"; className = "grade-a"; }
+        else if(score > 6) { msg = "PASSED WITH GOOD GRADE = B"; className = "grade-b"; }
+        else if(score >= 4) { msg = "PASS"; }
+        else { msg = "FAIL"; className = "fail"; }
+        
+        document.getElementById('grade-msg').innerText = msg;
+        document.getElementById('grade-msg').className = className;
+    }
+</script>
+
+</body>
+</html>
